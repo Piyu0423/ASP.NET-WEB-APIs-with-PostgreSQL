@@ -51,15 +51,29 @@ namespace API_Demo.Controllers
         [HttpPut("EditUser")]
         public async Task<IActionResult> EditUser([FromBody] User user)
             {
-            var rows = await _context.Users.Where(x=>x.Id == user.Id)
-            .ExecuteUpdateAsync(x=>x.SetProperty(x=>x.Name, user.Name));
-            return Ok(rows);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
+
+            if (existingUser == null)
+            {
+                return NotFound($"User with Id {user.Id} not found.");
             }
+
+            existingUser.Name = user.Name;
+            existingUser.Occupation = user.Occupation;
+            existingUser.Salary = user.Salary;
+
+            await _context.SaveChangesAsync();
+            return Ok(existingUser);
+        }
 
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DeleteUser(int userId)
         {
             var rows = await _context.Users.Where(x => x.Id == userId).ExecuteDeleteAsync();
+            if (rows == null)
+            {
+                return NotFound();
+            }
             return Ok(true);
         }
 
