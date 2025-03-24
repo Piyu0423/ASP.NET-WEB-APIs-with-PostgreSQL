@@ -11,5 +11,11 @@ namespace API_Demo.Models
         public string Name { get; set; }
         public string Occupation { get; set; } 
         public decimal Salary { get; set; }
+
+        public int DepartmentId { get; set; }
+        public Department Department { get; set; }
+
+        public ICollection<SalaryHistory> SalaryHistories { get; set; }
+        public ICollection<PerformanceReview> PerformanceReviews { get; set; }
     }
 }
