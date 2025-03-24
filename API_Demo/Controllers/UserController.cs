@@ -25,9 +25,24 @@ namespace API_Demo.Controllers
             return Ok(results);
         }
 
+        [HttpGet("GetUser/{userId}")]
+        public async Task<IActionResult> GetUserById(int userId)
+        {
+            var row = await _context.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            if (row == null)
+            {
+                return NotFound($"User with ID {userId} not found.");
+            }
+            return Ok(row);
+        }
+
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CreateUser([FromBody] User user)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);  // Returns validation errors
+            }
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return Ok();
